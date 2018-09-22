@@ -1,3 +1,6 @@
+<div class="my-container">
+	<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+</div>
 <ng-template #content let-c="close" let-d="dismiss">
 <div class="modal-header">
 	<h4 class="modal-title">Success</h4>
@@ -10,14 +13,14 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-outline-dark"
-		(click)="c();redirect()">Ok</button>
+		(click)="c();">Ok</button>
 </div>
 </ng-template>
-<div class="save-edit" style="float: right" *ngIf="showEditButton">
+<!-- <div class="save-edit" style="float: right;" *ngIf ="showEditButton"  >
 	<fa class="edit-icon icons" data-toggle="tooltip"
 		data-placement="right" title="Save" data-animation="true"
 		data-delay="0" [name]="'edit'" (click)="editClick()"></fa>
-</div>
+</div>  -->
 
 <form #formName="ngForm" class="former clear-right"
 	(ngSubmit)="createSystem()" enctype="multipart/form-data">
@@ -35,31 +38,30 @@
 		<div class="form-row">
 				<div class="form-group col-md-6">
 	
-					<label for="inputState">System Name</label>
+					<label for="inputState">System Acronym</label>
 					<div class="asterisk">*</div>
 					<input type="text" class="form-control" name="acronym"
-						[(ngModel)]="system.acronym" readonly="readonly">
+						[(ngModel)]="system.acronym" required>
 				</div>
 				<div class="form-group col-md-6">
 	
-					<label for="inputState">System Code</label>
+					<label for="inputState">System Name</label>
 					<div class="asterisk">*</div>
-					<input type="text" class="form-control" name="localityCd">
+					<input type="text" class="form-control" name="systemName" [(ngModel)]="system.name" required>
 				</div>
 	
 			</div>
-		<div class="form-row">
+		<div *ngIf="!showSource" class="form-row">
 			<div class="form-group col-md-6">
 
 				<label for="inputState">Last Updated by</label>
-				<div class="asterisk">*</div>
+			
 				<input type="text" class="form-control">
 			</div>
-			<div class="form-group col-md-6">
+			<div  class="form-group col-md-6">
 				<label for="lastName">Updated at</label>
-				<div class="asterisk">*</div>
-				<input type="text" class="form-control" name="updatedTime"
-					[(ngModel)]="updatedTime">
+				
+				<input type="text" class="form-control" name="updatedTime" [(ngModel)]="updatedTime">
 			</div>
 		</div>
 		
@@ -71,12 +73,14 @@
 
 				<label for="inputState">Business Owner</label>
 				<div class="asterisk">*</div>
-				<input type="text" class="form-control" ngModel name="firstName">
+				<input type="text" class="form-control"  name="firstName"
+					[(ngModel)]="system.businessOwnerNameDoe" required>
 			</div>
 			<div class="form-group col-md-6">
 				<label for="lastName">System Owner</label>
 				<div class="asterisk">*</div>
-				<input type="text" class="form-control" ngModel name="lastName">
+				<input type="text" class="form-control" name="lastName"
+					[(ngModel)]="system.systemOwnerNameDoe" required>
 			</div>
 		</div>
 
@@ -89,15 +93,21 @@
 		<div class="form-row">
 				<div class="form-group col-md-6">
 						<label class="label-form" for="definitiveSource"><b>Definitive Source</b></label><div class="asterisk">*</div>
-						  <select class="form-control" id="definitiveSource" required>
-							<option selected>Choose...</option>
-							<option>High</option>
-							<option>Medium</option>
-							<option>Low</option>
+						<input *ngIf="!showSource" type="text" class="form-control" ngModel name="sysSen" [(ngModel)]="system.systemSensitivityName" required>
+						<select *ngIf="showSource" class="form-control" [(ngModel)]="system.systemSensitivity" (change)="selectDefinitive($event.target.value)" name="sysSen" required>
+							<option value="1">High</option>
+							<option value="2" >Medium</option>
+							<option value="3">Low</option>
 						  </select>
 					</div>
-		</div>
+		</div> 
 
 	</fieldset>
+	<div class="buttons">
+
+			<button type="submit" class="submit btn btn-primary"
+				[disabled]="!formName.valid">Submit</button>
+			<button type="cancel" class="cancel btn btn-primary">Cancel</button>
+		</div>
 
 </form>

@@ -1,3 +1,6 @@
+<div class="my-container">
+	<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+</div>
 <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
       <h4 class="modal-title">Audit</h4>
@@ -15,7 +18,7 @@
   
   
   
-  <div class="plus">
+  <div class="plus" *ngIf="!showSigned">
     <div class="save-edit" style="float: right">
   
       <fa class="edit-icon icons" [name]="'edit'" (click)="editClick()"></fa>
@@ -78,7 +81,7 @@
         <tbody>
   
   
-          <tr *ngFor="let appsolution of appMOUs">
+          <tr *ngFor="let appsolution of moudtos">
             <td>
               <a class="box" (click)="getAppMOU(appsolution.mouId)" style="cursor: pointer;">{{ appsolution.name}}</a>
             </td>

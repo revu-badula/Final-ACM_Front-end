@@ -46,7 +46,7 @@ export class SystemLegalComponent implements OnInit {
     private  http: Http,private modalService: NgbModal,private utilservice: UtilService,
   private router: Router) { 
   this.mou = new Mou();
-  this.getAppId(); 
+  //this.getAppId(); 
   this.files = [] as File[];
    
  }
@@ -55,22 +55,22 @@ export class SystemLegalComponent implements OnInit {
  
     
   }
-  getAppId(){
-  this._apiservice.viewApplication(UtilService.systemName)
-      .subscribe((data: any) => {
-      this.acronym = data.applicationViewDTO.acronym;
-      let d = new Date(data.applicationViewDTO.updatedTime);
-let day = d.getDate();
-let month = d.getMonth()+1;
-let year = d.getFullYear();
-this.updatedTime = month+"/"+day+"/"+year;
+  // getAppId(){
+//   this._apiservice.viewApplication(UtilService.systemName)
+//       .subscribe((data: any) => {
+//       this.acronym = data.applicationViewDTO.acronym;
+//       let d = new Date(data.applicationViewDTO.updatedTime);
+// let day = d.getDate();
+// let month = d.getMonth()+1;
+// let year = d.getFullYear();
+// this.updatedTime = month+"/"+day+"/"+year;
       
       
-      this.appId = data.applicationViewDTO.applicationId;
-       this.mou.applicationID = data.applicationViewDTO.applicationId;
-       this.getAppMOUs(data.applicationViewDTO.applicationId);
-      }, error => console.log(error));
-  }
+//       this.appId = data.applicationViewDTO.applicationId;
+//        this.mou.applicationID = data.applicationViewDTO.applicationId;
+//        this.getAppMOUs(data.applicationViewDTO.applicationId);
+//       }, error => console.log(error));
+//   }
   
   editClick() {
   this.showLegalBox = false;

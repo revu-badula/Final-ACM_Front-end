@@ -66,7 +66,11 @@ getAssessData:apiBaseUrl + 'getAppAssessment',
 getAssessmentFile:apiBaseUrl +'getAssessmentFile',
 addAuditType:apiBaseUrl + 'addAuditType',
 saveAppSolutionDevices:apiBaseUrl + 'saveAppSolutionDevices' ,
-getDevices:apiBaseUrl + 'getAppSolution'
+getDevices:apiBaseUrl + 'getAppSolution',
+getBusinessOwner: apiBaseUrl + 'getBusinessOwnerNameDoe',
+getSystemAdministrator: apiBaseUrl + 'getSystemOwnerNameDoe',
+getDeviceFile: apiBaseUrl + 'getDeviceFile'
+
 }
 
 

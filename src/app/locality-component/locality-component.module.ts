@@ -52,6 +52,7 @@ import { AssessAttachmentsComponent } from './locality-tab/locality-assessment/a
 import { AssessLessonsComponent } from './locality-tab/locality-assessment/assess-lessons/assess-lessons.component';
 import { LocalitysolutionsformComponent } from './locality-tab/locality-solutions/localitysolutionsform/localitysolutionsform.component';
 import {NgxPaginationModule} from 'ngx-pagination';
+import { NgbdModalContent } from './locality-tab/locality-solutions/ngb-modal.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -75,6 +76,13 @@ import {NgxPaginationModule} from 'ngx-pagination';
   })
   ],
   declarations: [LocalityAddComponentComponent, LocalityTabComponent,LocalityComponentComponent, LocalityDetailsComponent, LocalitySolutionsComponent, LocalitySolutionsLinkComponent, LocalitySolutionstablelinkComponent, LocalityBusinessComponent, LocalityAuditComponent, AuditDetailsComponent, AuditFindingsComponent, AuditRecomendationsComponent, LocalityLegalComponent, AuditManagementComponent, LocalitySecurityComponent, AuditActionComponent, AuditBusinessriskComponent, AuditSecurityriskComponent, AuditBudgetComponent, AuditAttachmentsComponent, LocalityAssessmentComponent, 
-  LocalityTechnicalComponent,FilterPipeDate, FilterAuditName,AuditFirstComponent, AuditDetailsTab, AuditLessonsComponent, AssessDetailsComponent, AssessTabComponent,AuditDetailsTab1, LegalformComponent, LegalmainComponent, AssessDetailsComponent, AssessTabComponent, AssessDowntabsComponent,AssessFindComponent,AssessRecomendComponent,ManagementComponent,AssessActionComponent,AssessBusinessComponent,AssessSecurityComponent,AssessBudgetComponent,AssessAttachmentsComponent,AssessLessonsComponent, LocalitysolutionsformComponent]
+  LocalityTechnicalComponent,FilterPipeDate, FilterAuditName,AuditFirstComponent, 
+  AuditDetailsTab, AuditLessonsComponent, AssessDetailsComponent, AssessTabComponent,
+  AuditDetailsTab1, LegalformComponent, LegalmainComponent, AssessDetailsComponent, 
+  AssessTabComponent, AssessDowntabsComponent,AssessFindComponent,
+  AssessRecomendComponent,ManagementComponent,AssessActionComponent,
+  AssessBusinessComponent,AssessSecurityComponent,AssessBudgetComponent,
+  AssessAttachmentsComponent,AssessLessonsComponent, LocalitysolutionsformComponent, NgbdModalContent],
+  entryComponents: [NgbdModalContent]
 })
 export class LocalityComponentModule { }

@@ -1,9 +1,12 @@
-<ng-template #content let-c="close" let-d="dismiss">
+<div class="my-container">
+  <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+</div>
+<!-- <ng-template #content let-c="close" let-d="dismiss">
 <div class="modal-header">
   <h4 class="modal-title">Info</h4>
-<!--   <button type="button" class="close" aria-label="Close" (click)="d()"> -->
-<!--     <span aria-hidden="true">&times;</span> -->
-<!--   </button> -->
+   <button type="button" class="close" aria-label="Close" (click)="d()">
+     <span aria-hidden="true">&times;</span>
+  </button> 
 </div>
 <div class="modal-body">
   <p>System does not exist.Do you want to create it?</p>
@@ -12,9 +15,9 @@
   <button type="button" class="btn btn-outline-dark" (click)="c();redirect('yes')">Yes</button>
   <button type="button" class="btn btn-outline-dark" (click)="c();redirect('no')">No</button>
 </div>
-</ng-template>
+</ng-template> -->
 
-<form class="former">
+<!-- <form class="former">
  <div class="page-description">
        
     </div>
@@ -35,6 +38,56 @@
 
     </div>
 
+</form> -->
+<div class="plus">
+
+  <i class="fa fa-plus-square-o" aria-hidden="true" style="float:right;" (click)="createSystem()"></i>
+
+
+</div>
+
+<form class="forms">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col" (click)="handleSort()">System Name
+          <i class="fa fa-arrow-down" *ngIf="!desc"></i> <i class="fa fa-arrow-up" *ngIf="desc"></i></th>
+
+        <th scope="col" (click)="handleSort()">Business Owner
+          <i class="fa fa-arrow-down" *ngIf="!desc"></i> <i class="fa fa-arrow-up" *ngIf="desc"></i></th>
+
+
+        <th scope="col" (click)="handleSort()">System Owner
+          <i class="fa fa-arrow-down" *ngIf="!desc"></i> <i class="fa fa-arrow-up" *ngIf="desc"></i></th>
+
+
+
+      </tr>
+    </thead>
+    <tbody>
+
+      <td>
+        <tr *ngFor="let acronym of acronyms| keys" (click)="viewApplication(acronym.value)">
+          <a class="anchor">{{acronym.value}}</a></tr>
+      </td>
+      <td>
+        <tr *ngFor="let businessOwner of businessOwners| keys">
+          {{businessOwner.value}}</tr>
+      </td>
+
+      <td>
+
+        <tr *ngFor="let systemOwner of systemOwners| keys">
+          {{systemOwner.value}}
+        </tr>
+      </td>
+
+
+    </tbody>
+  </table>
+  <br>
+
+  <!-- <a (click)="openVendorEdit(10)">click here...........</a> -->
 </form>
 
 

@@ -1,18 +1,16 @@
-import {APP_CONFIG} from '../../../app.config';
-import {Location} from '@angular/common';
-import {Http, HttpModule, Headers, RequestOptions} from '@angular/http';
-import {File} from 'babel-types';
-import {Locality, applicationView, WorkHours} from '../../../data_model_locality';
-import {Component, OnInit, HostListener, ViewChild, ElementRef, TemplateRef, NgModule} from '@angular/core';
+import { APP_CONFIG } from '../../../app.config';
+import { Location } from '@angular/common';
+import { Http, HttpModule, Headers, RequestOptions } from '@angular/http';
+import { File } from 'babel-types';
+import { Locality, applicationView, WorkHours } from '../../../data_model_locality';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, TemplateRef, NgModule } from '@angular/core';
 
-import {ApiserviceService} from '../../../apiservice.service';
-import {FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, NgForm} from '@angular/forms';
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import {NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
-import {UtilService} from '../../../util.service';
-import {FilterPipeDate} from '../../locality-date-filter';
-import { Cookie } from 'ng2-cookies';
-
+import { ApiserviceService } from '../../../apiservice.service';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { UtilService } from '../../../util.service';
+import { FilterPipeDate } from '../../locality-date-filter';
 
 @Component({
   selector: 'app-locality-details',
@@ -21,7 +19,7 @@ import { Cookie } from 'ng2-cookies';
   providers: [ApiserviceService]
 })
 export class LocalityDetailsComponent implements OnInit {
-  daysArray = ["Sunday", "Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  daysArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   @ViewChild('fileInput') inputEl: ElementRef;
   @ViewChild('editForm') solutionsForm: NgForm;
   @ViewChild('content') content: TemplateRef<any>;
@@ -38,10 +36,9 @@ export class LocalityDetailsComponent implements OnInit {
   showEditButton: boolean = false;
   time: any;
   workHours: WorkHours;
-  public loading:boolean= false;
-  public showBtn:boolean= false;
-  public isShow:boolean = false;
-
+  public loading: boolean = false;
+  public showBtn: boolean = false;
+public isShow:boolean = false;
 
   constructor(private route: ActivatedRoute, private _apiservice: ApiserviceService, private fb: FormBuilder
     , private http: Http, private _location: Location, private modalService: NgbModal, private router: Router, private utilservice: UtilService) {
@@ -69,12 +66,9 @@ export class LocalityDetailsComponent implements OnInit {
 
   editClick(event): void {
     this.editableForm = false;
-    this.showBtn=true;
-     this.isShow=true;
+    this.showBtn = true;
+       this.isShow=true;
 
-  }
-  d(){
-  this.router.navigate(['/locality/map']);
   }
 
 
@@ -85,36 +79,36 @@ export class LocalityDetailsComponent implements OnInit {
 
   createLocality() {
 
-  
+   
+
 
    
-    var formData = new FormData();
-   
+
     let ngbModalOptions: NgbModalOptions = {
       backdrop: 'static',
       keyboard: false
     };
     this.loading = true;
     if (this.appId === undefined) {
-     this.locality.createdByName=Cookie.get('userName');
-     let url_update = APP_CONFIG.addLocality;
-     this.locality.activeLocality = 1;
-     
-     formData.append('createApp', JSON.stringify(this.locality));
+      var formData = new FormData();
+      this.locality.activeLocality=1;
+      let url_update = APP_CONFIG.addLocality;
+      formData.append('createApp', JSON.stringify(this.locality));
+      console.log(JSON.stringify(this.locality));
       this.http.post(url_update, formData).subscribe((data: any) => {
         this.loading = false;
         this.contentData = "locality has been created.";
-        localStorage.setItem('active','true');
+        localStorage.setItem('active', 'true');
 
         this.modalService.open(this.content, ngbModalOptions);
       }, error => {
         this.loading = false;
-        console.log(error);});
+        console.log(error);
+      });
 
     }
     else {
-    this.locality.updatedByName=Cookie.get('userName');
-
+ var formData = new FormData();
       this.locality.applicationId = this.appId;
       formData.append('application', JSON.stringify(this.locality));
       this.http.post(APP_CONFIG.updateLocality, formData).subscribe((data: any) => {
@@ -130,69 +124,68 @@ export class LocalityDetailsComponent implements OnInit {
   }
 
   viewApplication(local) {
- 
+
     this.loading = true;
     this._apiservice.viewApplication(local)
       .subscribe((data: any) => {
         this.loading = false;
         if (data.applicationViewDTO === null) {
-         this.isShow = true;
+          this.isShow = true;
           this.editableForm = false;
           this.locality.acronym = local;
-            this.locality.workHoursDTOs = []
-            for (let day in this.daysArray) {
-              this.workHours = new WorkHours();
-              this.workHours.day = this.daysArray[day];
-              this.locality.workHoursDTOs.push(this.workHours);
-            }  
+          this.locality.workHoursDTOs = []
+          for (let day in this.daysArray) {
+            this.workHours = new WorkHours();
+            this.workHours.day = this.daysArray[day];
+            this.locality.workHoursDTOs.push(this.workHours);
+          }
 
         }
         else {
-         //this.isShow=false;
           this.showEditButton = true;
-          this.showBtn= false;
+          this.showBtn = false;
           UtilService.active = true;
-          localStorage.setItem('active','true');
+          localStorage.setItem('active', 'true');
           this.appId = data.applicationViewDTO.applicationId;
           this.locality = data.applicationViewDTO;
-          this.locality.workHoursDTOs=data.applicationViewDTO.workHoursDTOs;
+          this.locality.workHoursDTOs = data.applicationViewDTO.workHoursDTOs;
           let d = new Date(this.locality.updatedTime);
           let day = d.getDate();
           let month = d.getMonth() + 1;
           let year = d.getFullYear();
           this.updatedTime = day + "/" + month + "/" + year;
-       
-        this.locality.workHoursDTOs = data.applicationViewDTO.workHoursDTOs;
+
+          this.locality.workHoursDTOs = data.applicationViewDTO.workHoursDTOs;
           let dummy_array = [];
-          
-            for (let day in this.daysArray) {
-            for(let workHour in this.locality.workHoursDTOs) {
-              if(this.locality.workHoursDTOs[workHour].day == this.daysArray[day]) {
+
+          for (let day in this.daysArray) {
+            for (let workHour in this.locality.workHoursDTOs) {
+              if (this.locality.workHoursDTOs[workHour].day == this.daysArray[day]) {
                 dummy_array.push(this.locality.workHoursDTOs[workHour])
               }
-              
+
             }
           }
-          this.locality.workHoursDTOs = dummy_array; 
-          console.log(dummy_array);
+          this.locality.workHoursDTOs = dummy_array;
+          //console.log(dummy_array);
           //console.log("this.locality.workHoursDTOs", this.locality.workHoursDTOs);
         }
-        
-        
+
+
       }, error => {
         this.loading = false;
         console.log(error);
       });
 
-  
-    
+
+
   }
 
 
-//  redirect() {
-//    this.router.navigate(['/locality/tab/solutions']);
-//
-//  }
+  //  redirect() {
+  //    this.router.navigate(['/locality/tab/solutions']);
+  //
+  //  }
 
 
 
@@ -219,18 +212,21 @@ export class LocalityDetailsComponent implements OnInit {
     return this.color === 'online' ? 0.8 : 1;
   }
 
-  getTime(value,day)
-  {
-    
+  getTime(value, day) {
+
     this.workHours.day = day;
     this.workHours.openTm = value;
   }
-  getCloseTime(value,day)
-  {
+  getCloseTime(value, day) {
     this.workHours.closeTm = value;
     this.locality.workHoursDTOs.push(this.workHours);
     //console.log(this.locality.workHoursDTOs);
   }
+  d(){
+    this.router.navigate(['/locality/map']);
+    }
+  
+  
 
 
 }

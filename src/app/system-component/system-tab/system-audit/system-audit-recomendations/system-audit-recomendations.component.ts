@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { AppAudit, Policy } from '../../../../data.model.auditDTO';
 import { ApiserviceService } from '../../../../apiservice.service';
 import { UtilService } from '../../../../util.service';
@@ -7,6 +7,12 @@ import { APP_CONFIG } from '../../../../app.config';
 import {Http, HttpModule, Headers, RequestOptions} from '@angular/http';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import * as moment from 'moment';
+import { NgbModal,NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { DatePipe } from '@angular/common';
+import { FormsModule, NgForm, FormGroup } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
+declare var swal: any; ''
+import { Cookie } from 'ng2-cookies';
 @Component({
   selector: 'app-audit-recomendations',
   templateUrl: './system-audit-recomendations.component.html',
@@ -14,23 +20,24 @@ import * as moment from 'moment';
 })
 export class SystemAuditRecomendationsComponent implements OnInit {
 
+  @ViewChild('content') content:TemplateRef<any>;
+  @ViewChild('myForm') myForm: FormGroup;
+
   appAudit: AppAudit;
   public appAuditDTOs:any;
   public editData:any;
   public estDate:any;
+  public info:string="";
+  public showEdit:boolean=false;
   public showForm:boolean = true;
+  public loading:boolean = false;
   public myDatePickerOptions: IMyDpOptions = {
     dateFormat: 'yyyy-mm-dd'
   };
   constructor( private _apiservice: ApiserviceService, 
-    private utilService: UtilService,private http: Http,private router:Router,private route: ActivatedRoute) { 
-   this.utilService.getEdit().subscribe(val =>{
-     if(val)
-     {
-       this.showForm = false;
-     }
-     else{}
-   });
+    private utilService: UtilService,private http: Http,private router:Router,
+    private route: ActivatedRoute, private modalService: NgbModal,private datepipe: DatePipe) { 
+  
     this.appAudit = new AppAudit();
     this.getAppId();
   }
@@ -39,23 +46,30 @@ export class SystemAuditRecomendationsComponent implements OnInit {
   }
 
   getAppId() {
-  
-    this._apiservice.viewApplication(UtilService.systemName)
+  this.loading=true;
+    this._apiservice.viewApplication(localStorage.getItem('systemName'))
       .subscribe((data: any) => {
+        this.loading=false;
         this.appAudit.applicationID = data.applicationViewDTO.applicationId;
         this.appAuditDTOs = data.applicationViewDTO.appAuditDTOs;
         this.showOnPageLoad();
-      }, error => console.log(error));
+      }, error => {
+        this.loading = false;
+        console.log(error);}
+      );
     }
 
     showOnPageLoad()
     {
-      if(UtilService.appAuditId === '')
+      if(localStorage.getItem('systemAppAuditId') === null)
       {
-        console.log('Not edit mode');
+        
       }
       else{
-      this.editData = this.appAuditDTOs.filter(item => item.appAuditId === UtilService.appAuditId);
+        this.showEdit = true;
+        let id = localStorage.getItem('systemAppAuditId');
+        let auid = +id;
+      this.editData = this.appAuditDTOs.filter(item => item.appAuditId === auid);
       
       for(let i=0;i<this.editData.length;i++)
       {
@@ -79,19 +93,19 @@ export class SystemAuditRecomendationsComponent implements OnInit {
    
   getEstDate(value)
     {
-      console.log(value);
       if (value.formatted === "") {
-        
+        this.appAudit.estimatedCompletionDt=null;
       }
       else {
         let d = value.formatted;
         //this.audate = Date.parse(d);
-        this.appAudit.estimatedCompletionDt = moment(d).format();
+        let latest_date =this.datepipe.transform(d, 'yyyy-MM-dd');
+        this.appAudit.estimatedCompletionDt = moment(latest_date).format();
       }
       
     }
    showAudit(){
- this.router.navigate(['/system/tab/Audit/']);
+ this.router.navigate(['/system/tab/Audit']);
  }
 
 
@@ -100,17 +114,79 @@ export class SystemAuditRecomendationsComponent implements OnInit {
 
   saveRecommendations()
   {
+    let ngbModalOptions: NgbModalOptions = {
+      backdrop : 'static',
+      keyboard : false
+      };
+    this.loading=true;
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     let options = new RequestOptions({ headers: headers });
     let url_update = APP_CONFIG.updateAppAuditInfo;
+    this.appAudit.updatedBy=Cookie.get('userName');
     let data = JSON.stringify(this.appAudit);
     this.http.post(url_update,data,options)
         .subscribe((data: any) => {
-          console.log(data);
+          this.loading=false;
+          const { myForm: { value: formValueSnap } } = this;
+          this.myForm.reset(formValueSnap);
+          this.info="Recomendations has been updated.";
+          this.modalService.open(this.content,ngbModalOptions);
         }, error => {
+          this.loading=false;
           console.log(error);
         });
+  }
+
+  valueChanged()
+  {
+    this.showForm = false;
+    this.showEdit = false;
+  }
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    // console.log(this.myForm);
+    // console.log(this.myForm.dirty);
+    //if (this.myForm.classList[3] === 'ng-touched' || this.myForm.nativeElement.classList[3] === 'ng-dirty') {
+    if (this.myForm.dirty) {
+      //return this.dialogService.confirm('Discard changes for Budget?');
+      //const modal=this.modalService.open(this.content1, ngbModalOptions);
+
+      return this.confirm1('Do you want to save changes?', 'for recomendations', 'YES', 'NO');
+
+
+    }
+
+    return true;
+
+  }
+
+
+
+
+  confirm1(title = 'Are you sure?', text, confirmButtonText, cancelButtonText, showCancelButton = true) {
+    return new Promise<boolean>((resolve, reject) => {
+      swal({
+        title: title,
+        text: text,
+        type: 'warning',
+        showCancelButton: showCancelButton,
+        confirmButtonText: confirmButtonText,
+        cancelButtonText: cancelButtonText,
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.value !== undefined && result.value) {
+          this.saveRecommendations();
+          resolve(false);
+        }
+        else {
+          resolve(true);
+        }
+      }, error => reject(error));
+    });
+
+
+
+
   }
 
 }

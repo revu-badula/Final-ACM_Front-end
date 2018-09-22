@@ -7,6 +7,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UtilService } from '../../../../util.service';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
+import {FormsModule, NgForm, FormGroup } from '@angular/forms';
+
 @Component({
   selector: 'app-legalform',
   templateUrl: './system-legalform.component.html',
@@ -14,6 +16,7 @@ import { Router } from '@angular/router';
 })
 export class SystemLegalformComponent implements OnInit {
   @ViewChild('fileInput') inputEl: ElementRef;
+  @ViewChild('myForm') myForm: FormGroup;
 
   public myDatePickerOptions: IMyDpOptions = {
     dateFormat: 'mm/dd/yyyy'
@@ -33,8 +36,9 @@ export class SystemLegalformComponent implements OnInit {
   public showSigned: boolean = false;
   public certify: any;
   public recipt: any;
-
+  public loading:boolean=false;
   public showLegalBox: boolean = true;
+  public moudtos:any;
   constructor(private _apiservice: ApiserviceService,
     private http: Http, private modalService: NgbModal, private utilservice: UtilService,
     private router: Router) {
@@ -47,9 +51,12 @@ export class SystemLegalformComponent implements OnInit {
 
 
   getAppId() {
-    this._apiservice.viewApplication(UtilService.systemName)
+    this.loading=true;
+    this._apiservice.viewApplication(localStorage.getItem('systemName'))
       .subscribe((data: any) => {
+        this.loading=false;
         this.acronym = data.applicationViewDTO.acronym;
+        this.moudtos=data.applicationViewDTO.moudtos;
         let d = new Date(data.applicationViewDTO.updatedTime);
         let day = d.getDate();
         let month = d.getMonth() + 1;
@@ -57,15 +64,27 @@ export class SystemLegalformComponent implements OnInit {
         this.updatedTime = month + "/" + day + "/" + year;
         this.appId = data.applicationViewDTO.applicationId;
         this.mou.applicationID = data.applicationViewDTO.applicationId;
-        if(UtilService.appMouId === '')
-        {
-          this.showLegalBox = false;
-        }
-        else{
-          this.getAppMOUs(data.applicationViewDTO.applicationId);
-        }
+        this.showPageOnLoad();
+      }, error =>{
+        this.loading=false;
+       console.log(error);
+      });
+  }
 
-      }, error => console.log(error));
+  showPageOnLoad()
+  {
+    if (localStorage.getItem('systemMouId') === null) {
+      this.showLegalBox = false;
+    }
+    else {
+      //this.getAppMOUs(data.applicationViewDTO.applicationId);
+      let id = localStorage.getItem('systemMouId');
+      let appMouid = +id;
+      let moudata = this.moudtos.filter(item => item.mouId === appMouid);
+      for (let i = 0; i < moudata.length; i++) {
+        this.getAppMOU(moudata[i]);
+      }
+    }
   }
 
   saveMOU() {
@@ -97,11 +116,12 @@ export class SystemLegalformComponent implements OnInit {
 
     this._apiservice.getAppMOUs(id)
       .subscribe((data: any) => {
-       let moudata =data.filter(item => item.mouId === UtilService.appMouId);
-       for(let i =0;i<moudata.length;i++)
-       {
-         this.getAppMOU(moudata[i]);
-       }
+        let id = localStorage.getItem('systemMouId');
+        let appMouid = +id;
+        let moudata = data.filter(item => item.mouId === appMouid);
+        for (let i = 0; i < moudata.length; i++) {
+          this.getAppMOU(moudata[i]);
+        }
       }, error => console.log(error));
   }
 
@@ -198,14 +218,12 @@ export class SystemLegalformComponent implements OnInit {
 
   }
 
-  editClick()
-  {
+  editClick() {
     this.showLegalBox = false;
   }
 
-  goBack()
-  {
-    this.router.navigate(['/locality/tab/legal']);
+  goBack() {
+    this.router.navigate(['/system/tab/legal']);
   }
 
 

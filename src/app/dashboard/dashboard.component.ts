@@ -14,6 +14,8 @@ export class DashboardComponent implements OnInit {
     localStorage.removeItem('appMouId');
     localStorage.removeItem('auditActive');
     localStorage.removeItem('active');
+    localStorage.removeItem('systemName');
+    localStorage.removeItem('systemActive');
   }
 
   ngOnInit() {

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, TemplateRef, } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import {ApiserviceService} from '../../apiservice.service';
-import {NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
-import {UtilService} from '../../util.service';
+import { ApiserviceService } from '../../apiservice.service';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { UtilService } from '../../util.service';
 @Component({
   selector: 'app-system-add-component',
   templateUrl: './system-add-component.component.html',
@@ -10,91 +10,167 @@ import {UtilService} from '../../util.service';
   providers: [ApiserviceService]
 })
 export class SystemAddComponentComponent implements OnInit {
- 
-  public showForm:string;
+
+  public showForm: string;
   public titus: string;
   public system: any;
   public acronyms: any;
-  
-	@ViewChild('content') content:TemplateRef<any>;
-  constructor( private router: Router,private _apiservice: ApiserviceService,  private modalService: NgbModal,private utilService: UtilService ) {
-  UtilService.active = false;
+  public businessOwners: any;
+  public systemOwners: any;
+  public loading: boolean = false;
+  public desc:boolean=false;
+  @ViewChild('content') content: TemplateRef<any>;
+  constructor(private router: Router, private _apiservice: ApiserviceService, private modalService: NgbModal, private utilService: UtilService) {
+    localStorage.removeItem('systemName');
+    localStorage.removeItem('systemActive');
 
   }
 
   ngOnInit() {
 
     this.getAppAcronyms();
+    this.getBusinessOwners();
+    this.getSystemOwners();
   }
-  
-  selectLocal(system){
-  if(system === 'Choose...'){
-  
+
+  //   selectLocal(system){
+  //   if(system === 'Choose...'){
+
+  //   }
+  //   else{
+  //   this.system = system;
+  //   let ngbModalOptions: NgbModalOptions = {
+  // 	      backdrop : 'static',
+  // 	      keyboard : false
+  // 	      };
+  //     this._apiservice.viewApplication(system)
+  //       .subscribe((data: any) => {
+  //       console.log(data);
+  //       if(data.applicationViewDTO === null){
+  //         this.modalService.open(this.content, ngbModalOptions);
+  //       }
+  //       else{
+  //       this.router.navigate(['/system/tab/info/' + system]);
+
+  //       }},error => {console.log(error);});
+  //       }
+
+
+  // }
+
+
+
+  // redirect(condition) {
+
+  //   if (condition === 'yes') {
+  //     this.router.navigate(['/system/tab2/info/' + this.system]);
+  //   }
+
+  //   else {
+
+  //     this.router.navigate(['/system/map']);
+
+  //   }
+
+  // }
+
+  // fetchSystem(system) {
+  //   this.system = system;
+  //   let ngbModalOptions: NgbModalOptions = {
+  //     backdrop: 'static',
+  //     keyboard: false
+  //   };
+  //   this._apiservice.viewApplication(system)
+  //     .subscribe((data: any) => {
+  //       console.log(data);
+  //       if (data.applicationViewDTO === null) {
+  //         this.modalService.open(this.content, ngbModalOptions);
+  //       }
+  //       else {
+  //         this.router.navigate(['/system/tab2/info/' + system]);
+
+  //       }
+  //     }, error => { console.log(error); });
+  // }
+
+
+  getAppAcronyms() {
+    this.loading=true;
+    this._apiservice.getAppAcronyms()
+      .subscribe((data: any) => {
+        this.acronyms = data;
+        this.loading=false;
+      }, error => {
+        this.loading=false;
+        console.log(error); });
+
   }
-  else{
-  this.system = system;
-  let ngbModalOptions: NgbModalOptions = {
-	      backdrop : 'static',
-	      keyboard : false
-	      };
-    this._apiservice.viewApplication(system)
+
+  getBusinessOwners() {
+    this.loading=true;
+    this._apiservice.getBusinessOwner()
       .subscribe((data: any) => {
-      console.log(data);
-      if(data.applicationViewDTO === null){
-        this.modalService.open(this.content, ngbModalOptions);
-      }
-      else{
-      this.router.navigate(['/system/tab/info/' + system]);
-      
-      }},error => {console.log(error);});
-      }
-   
-     
-}
+        this.loading=false;
+        this.businessOwners = data;
 
-redirect(condition)
-{
+      }, error => { 
+        this.loading=false;
+        console.log(error); });
 
-if(condition === 'yes')
-{
-this.router.navigate(['/system/tab/info/' + this.system]);
-}
+  }
 
-else{
 
-this.router.navigate(['/system/map']);
-
-}
-
-}
-
-fetchSystem(system)
-{
-this.system = system;
-let ngbModalOptions: NgbModalOptions = {
-	      backdrop : 'static',
-	      keyboard : false
-	      };
-    this._apiservice.viewApplication(system)
+  getSystemOwners() {
+    this.loading=true;
+    this._apiservice.getSystemAdministrator()
       .subscribe((data: any) => {
-      console.log(data);
-      if(data.applicationViewDTO === null){
-        this.modalService.open(this.content, ngbModalOptions);
-      }
-      else{
-      this.router.navigate(['/system/tab/info/' + system]);
-      
-      }},error => {console.log(error);});
-      }
+        this.loading=false;
+        this.systemOwners = data;
 
-  
-      getAppAcronyms(){
-        this._apiservice.getAppAcronyms()
-          .subscribe((data: any) => {
-            this.acronyms=data;
-            console.log("this is checking for sytems");
-            console.log(this.acronyms);
-      },error => { console.log(error);});
+      }, error => { 
+        this.loading=false;
+        console.log(error); });
 
+  }
+
+  viewApplication(system) {
+    localStorage.setItem('systemName', system);
+    this.router.navigate(['/system/tab2/info']);
+  }
+
+  createSystem()
+  {
+    this.router.navigate(['/system/tab2/info']);
+  }
+
+  handleSort() {
+    if (!this.desc) {
+      this.acronyms.sort(this.doAsc);
+      this.desc = true;
     }
+    else {
+      this.acronyms.sort(this.doDsc);
+      this.desc = false;
+    }
+
+  }
+  doAsc(a, b) {
+    if (a.auditTypeName > b.auditTypeName) {
+      return -1;
+    } else if (a.auditTypeName < b.auditTypeName) {
+      return 1;
+    }
+    return 0;
+  }
+
+  doDsc(a, b) {
+
+    if (a.auditTypeName < b.auditTypeName) {
+      return -1;
+    } else if (a.auditTypeName > b.auditTypeName) {
+      return 1;
+    }
+    return 0;
+  }
+
 }

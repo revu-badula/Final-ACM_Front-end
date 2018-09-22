@@ -10,11 +10,11 @@ import { UtilService } from "../../../../../util.service";
   export class SystemAuditDetailsTab implements OnInit {
     public mainData:any;
     public updatedTime:any;
-
+    public disabled:boolean;
 
     constructor(private _apiservice: ApiserviceService, 
       private utilService: UtilService, private route: ActivatedRoute) {
-      
+        this.disabled=UtilService.disabled;
       this.getAppId();
       }
 
@@ -25,7 +25,7 @@ import { UtilService } from "../../../../../util.service";
 
       getAppId() {
 
-        this._apiservice.viewApplication(UtilService.systemName)
+        this._apiservice.viewApplication(localStorage.getItem('systemName'))
           .subscribe((data: any) => {
             //this.appAudit.applicationID = data.applicationViewDTO.applicationId;
             this.mainData = data.applicationViewDTO.acronym;

@@ -59,8 +59,23 @@ export class Device{
 	nextScanningDt:any;
 	overallStatus:string;
 	notes:string;
+	deviceDocDTO:any=[];
 
 }
+
+
+export class DeviceDocDTO{
+	  deviceDocId:number;
+	   createdBy:string;
+	   createdTs:any;
+	   updatedBy:string;
+	   updatedTs:any;
+	   location:string;
+	   fileName:string;
+	   fileContent:string;
+	   status:boolean;
+	   newFile:boolean;
+   }
 export class Vendor{
  vendorId:number;
    name:string;

@@ -10,9 +10,7 @@ export class SystemTabComponent implements OnInit {
 loc:any;
 public showTab :boolean = true;
   constructor(private route: ActivatedRoute,private utilservice: UtilService) {
-   this.route.firstChild.params.subscribe(params => {
-    this.loc = params['System'];
-    }); 
+
   
    }
 

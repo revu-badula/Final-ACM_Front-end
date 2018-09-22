@@ -113,6 +113,18 @@ import { AssessLessonsComponent } from './locality-component/locality-tab/locali
 import { DummyComponent } from './policy-view-component/policy-view-forms-component/dummy/dummy.component';
 import { CanDeactivateGuard } from './deactive-guard-service';
 import { LocalitysolutionsformComponent } from './locality-component/locality-tab/locality-solutions/localitysolutionsform/localitysolutionsform.component';
+import { SystemGuardAudit } from './system-audit-guard';
+import { SystemGuard } from './system-guard';
+import { SystemAssessDowntabsComponent } from './system-component/system-tab/system-assessment/system-assess-downtabs/system-assess-downtabs.component';
+import { SystemAssessFindComponent } from './system-component/system-tab/system-assessment/system-assess-find/system-assess-find.component';
+import { SystemAssessRecomendComponent } from './system-component/system-tab/system-assessment/system-assess-recomend/system-assess-recomend.component';
+import { SystemAssessManagementComponent } from './system-component/system-tab/system-assessment/system-assess-management/system-assess-management.component';
+import { SystemAssessActionComponent } from './system-component/system-tab/system-assessment/system-assess-action/system-assess-action.component';
+import { SystemAssessBusinessComponent } from './system-component/system-tab/system-assessment/system-assess-business/system-assess-business.component';
+import { SystemAssessSecurityComponent } from './system-component/system-tab/system-assessment/system-assess-security/system-assess-security.component';
+import { SystemAssessBudgetComponent } from './system-component/system-tab/system-assessment/system-assess-budget/system-assess-budget.component';
+import { SystemAssessAttachmentsComponent } from './system-component/system-tab/system-assessment/system-assess-attachments/system-assess-attachments.component';
+import { SystemAssessLessonsComponent } from './system-component/system-tab/system-assessment/system-assess-lessons/system-assess-lessons.component';
 const appRoutes: Routes = [
 
 
@@ -130,147 +142,7 @@ const appRoutes: Routes = [
   { path: 'policyAdd', component: PolicyAddComponent, canActivate: [AuthGuard] },
   { path: 'deviceInventory', component: DeviceComponent, canActivate: [AuthGuard] },
   { path: 'updateDevice/:id', component: UpdateDeviceComponent, canActivate: [AuthGuard] },
-  {
-    path: "system", component: SystemComponentComponent,
-    children: [
-      {
-        path: 'map',
-        component: SystemAddComponentComponent,
-      },
-      {
-        path: 'tab',
-        component: SystemTabComponent,
-        children: [
-          {
-            path: 'info/:System',
-            component: SystemDetailsComponent
-          },
-          {
-            path: 'assessment',
-            component: SystemAssessmentComponent, canActivate: [WorkflowGuard]
-          },
-          //  {
-          //  path: 'Tab1',
-          //component: AssessTabComponent,
-
-          //children: [{
-
-          //path: 'first1',
-          //component: AssessDetailsComponent
-          //},
-          {
-            path: 'technical',
-            component: SystemTechnicalComponent, canActivate: [WorkflowGuard]
-          },
-          {
-            path: 'legal',
-            component: SystemLegalComponent, canActivate: [WorkflowGuard],
-            children: [
-              {
-                path: '',
-                component: SystemLegalmainComponent, canActivate: [WorkflowGuard]
-              },
-              {
-                path: 'legalform',
-                component: SystemLegalformComponent, canActivate: [WorkflowGuard]
-              }
-            ]
-          },
-          {
-            path: 'solutions',
-            component: SystemSolutionsComponent, canActivate: [WorkflowGuard]
-          },
-          {
-            path: 'security',
-            component: SystemSecurityComponent, canActivate: [WorkflowGuard]
-          },
-          {
-            path: 'link',
-            component: SystemSolutionstablelinkComponent, canActivate: [WorkflowGuard]
-          },
-          {
-            path: 'business',
-            component: SystemBusinessComponent, canActivate: [WorkflowGuard]
-          },
-          {
-
-            path: 'Audit',
-            component: SystemAuditComponent, canActivate: [WorkflowGuard],
-            children: [
-              {
-                path: '',
-                component: SystemAuditDetailsComponent
-              },
-              {
-                path: 'Tab',
-                component: SystemAuditDetailsTab,
-
-                children: [{
-
-
-                  path: 'first',
-                  component: SystemAuditFirstComponent
-                },
-                {
-                  path: 'find',
-                  component: SystemAuditFindingsComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'recomendation',
-                  component: SystemAuditRecomendationsComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'management',
-                  component: SystemAuditManagementComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'action',
-                  component: SystemAuditActionComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'brisk',
-                  component: SystemAuditBusinessriskComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'srisk',
-                  component: SystemAuditSecurityriskComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'budget',
-                  component: SystemAuditBudgetComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'attachment',
-                  component: SystemAuditAttachmentsComponent, canActivate: [WorkflowGuardAudit]
-                },
-                {
-                  path: 'lessons',
-                  component: SystemAuditLessonsComponent, canActivate: [WorkflowGuardAudit]
-                  //    }
-                  //  ]
-                }
-
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
   { path: 'systemView', component: SystemViewComponentComponent },
-
-
-
-
-
-
-
-
-
-
-
-
   {
     path: "locality", component: LocalityComponentComponent, canActivate: [AuthGuard],
     children: [
@@ -471,12 +343,209 @@ const appRoutes: Routes = [
       { path: 'applications', component: ApplicationsComponent, canActivate: [AuthGuard] },
       { path: 'dummy', component: DummyComponent, canActivate: [AuthGuard] }]
   },
+
+
+
+  {
+    path: "system", component: SystemComponentComponent, 
+    //canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'map',
+        component: SystemAddComponentComponent,
+        // canActivate: [AuthGuard]
+      },
+      {
+        path: 'tab2',
+        component: SystemTabComponent, 
+        //canActivate: [AuthGuard],
+        children: [
+          {
+            path: 'info',
+            component: SystemDetailsComponent,
+            // canActivate: [AuthGuard]
+          }, 
+          {
+            path: 'technical',
+            component: SystemTechnicalComponent,
+            // canActivate: [SystemGuard]
+          },
+          {
+            path: 'legal',
+            component: SystemLegalComponent,
+            // canActivate: [SystemGuard],
+            children: [
+              {
+                path: '',
+                component: SystemLegalmainComponent
+              },
+              {
+                path: 'legalform',
+                component: SystemLegalformComponent
+              }
+            ]
+          },
+          
+          {
+            path: 'security',
+            component: SystemSecurityComponent,
+            // canActivate: [SystemGuard]
+          },
+          {
+            path: 'assessment',
+            component: SystemAssessmentComponent, 
+            //canActivate: [WorkflowGuard],
+            
+            children: [{
+              path: '',
+              component: SystemAssessTabComponent,
+              // canActivate: [AuthGuard]
+            },
+            {
+              path: 'Tabs2',
+              component: SystemAssessDowntabsComponent,
+              // canActivate: [AuthGuard],
+
+              children: [{
+
+                path: 'first2',
+                component: SystemAssessDetailsComponent,
+                // canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'find2',
+                component: SystemAssessFindComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'recomendation2',
+                component: SystemAssessRecomendComponent, 
+                //canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'management2',
+                component: SystemAssessManagementComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'action2',
+                component: SystemAssessActionComponent, 
+                //canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'brisk2',
+                component: SystemAssessBusinessComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'srisk2',
+                component: SystemAssessSecurityComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'budget2',
+                component: SystemAssessBudgetComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard],
+              },
+              {
+                path: 'attachment2',
+                component: SystemAssessAttachmentsComponent,
+                // canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              },
+              {
+                path: 'lessons2',
+                component: SystemAssessLessonsComponent, 
+                //canActivate: [WorkflowGuardAssess], canDeactivate: [CanDeactivateGuard]
+              }
+              ]
+            }
+            ]
+
+
+          },
+          
+          {
+            path: 'link',
+            component: LocalitySolutionstablelinkComponent,
+            // canActivate: [WorkflowGuard]
+          },
+          {
+            path: 'business',
+            component: LocalityBusinessComponent,
+            // canActivate: [WorkflowGuard]
+          },
+          {
+
+            path: 'Audit',
+            component: SystemAuditComponent,
+            // canActivate: [WorkflowGuard],
+            children: [
+              {
+                path: '',
+                component: SystemAuditDetailsComponent,
+                // canActivate: [AuthGuard]
+              },
+              {
+                path: 'Tab',
+                component: SystemAuditDetailsTab, canActivate: [AuthGuard],
+
+                children: [{
+                  path: 'first',
+                  component: SystemAuditFirstComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'find',
+                  component: SystemAuditFindingsComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'recomendation',
+                  component: SystemAuditRecomendationsComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'management',
+                  component: SystemAuditManagementComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'action',
+                  component: SystemAuditActionComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'brisk',
+                  component: SystemAuditBusinessriskComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'srisk',
+                  component: SystemAuditSecurityriskComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'budget',
+                  component: SystemAuditBudgetComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'attachment',
+                  component: SystemAuditAttachmentsComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                },
+                {
+                  path: 'lessons',
+                  component: SystemAuditLessonsComponent, canActivate: [WorkflowGuardAudit], canDeactivate: [CanDeactivateGuard]
+                  //    }
+                  //  ]
+                }
+
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes, { useHash: true })],
   exports: [RouterModule],
-  providers: [WorkflowGuard, WorkflowGuardAudit, AuthGuard, WorkflowGuardAssess, CanDeactivateGuard]
+  providers: [WorkflowGuard, WorkflowGuardAudit, AuthGuard, WorkflowGuardAssess, CanDeactivateGuard, SystemGuardAudit, SystemGuard]
 
 })
 //export class SystemComponentRoutingModule {}

@@ -10,7 +10,7 @@ static policyGrpId: number;
 static auditId: number;
 static showTab:boolean;
 static disabled: boolean = true;
-
+static popModal:boolean = false;
 static active:boolean;
 static loginstate:boolean = false;
 static onEdit:boolean=false;

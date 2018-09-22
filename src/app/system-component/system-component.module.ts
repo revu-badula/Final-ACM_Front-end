@@ -42,6 +42,17 @@ import { SystemLegalmainComponent } from './system-tab/system-legal/system-legal
 import { KeysPipe } from './system-pipe';
 import { SystemAssessDowntabsComponent } from './system-tab/system-assessment/system-assess-downtabs/system-assess-downtabs.component';
 import { LocalityComponentRoutingModule } from '../app.routing';
+import { LoadingModule, ANIMATION_TYPES } from 'ngx-loading';
+import {NgxPaginationModule} from 'ngx-pagination';
+import { SystemAssessFindComponent } from './system-tab/system-assessment/system-assess-find/system-assess-find.component';
+import { SystemAssessActionComponent } from './system-tab/system-assessment/system-assess-action/system-assess-action.component';
+import { SystemAssessAttachmentsComponent } from './system-tab/system-assessment/system-assess-attachments/system-assess-attachments.component';
+import { SystemAssessBudgetComponent } from './system-tab/system-assessment/system-assess-budget/system-assess-budget.component';
+import { SystemAssessBusinessComponent } from './system-tab/system-assessment/system-assess-business/system-assess-business.component';
+import { SystemAssessLessonsComponent } from './system-tab/system-assessment/system-assess-lessons/system-assess-lessons.component';
+import { SystemAssessRecomendComponent } from './system-tab/system-assessment/system-assess-recomend/system-assess-recomend.component';
+import { SystemAssessSecurityComponent } from './system-tab/system-assessment/system-assess-security/system-assess-security.component';
+import { SystemAssessManagementComponent } from './system-tab/system-assessment/system-assess-management/system-assess-management.component';
 
 
 @NgModule({
@@ -55,10 +66,20 @@ import { LocalityComponentRoutingModule } from '../app.routing';
     BrowserModule,
    // SystemComponentRoutingModule,
    LocalityComponentRoutingModule,
-    MyDatePickerModule
+    MyDatePickerModule,
+    LoadingModule.forRoot({
+      animationType: ANIMATION_TYPES.rotatingPlane,
+      backdropBackgroundColour: 'rgba(0,0,0,0.5)', 
+      backdropBorderRadius: '4px',
+      primaryColour: '#fff', 
+      secondaryColour: '#fff', 
+      tertiaryColour: '#fff',
+      fullScreenBackdrop:true
+  }),
+  NgxPaginationModule,
   ],
   declarations: [SystemAddComponentComponent, SystemTabComponent,SystemComponentComponent, SystemDetailsComponent, SystemSolutionsComponent, SystemSolutionsLinkComponent, SystemSolutionstablelinkComponent, SystemBusinessComponent, SystemAuditComponent, SystemAuditDetailsComponent, SystemAuditFindingsComponent, SystemAuditRecomendationsComponent, SystemLegalComponent, SystemAuditManagementComponent, SystemSecurityComponent, SystemAuditActionComponent, SystemAuditBusinessriskComponent, SystemAuditSecurityriskComponent, 
   SystemAuditBudgetComponent, SystemAuditAttachmentsComponent, SystemAssessmentComponent, 
-  SystemTechnicalComponent,SystemFilterPipeDate, SystemFilterAuditName,SystemAuditFirstComponent, SystemAuditDetailsTab, SystemAuditLessonsComponent, SystemAssessDetailsComponent, SystemAssessTabComponent,SystemAuditDetailsTab1, SystemLegalformComponent, SystemLegalmainComponent,KeysPipe, SystemAssessDowntabsComponent]
+  SystemTechnicalComponent,SystemFilterPipeDate, SystemFilterAuditName,SystemAuditFirstComponent, SystemAuditDetailsTab, SystemAuditLessonsComponent, SystemAssessDetailsComponent, SystemAssessTabComponent,SystemAuditDetailsTab1, SystemLegalformComponent, SystemLegalmainComponent,KeysPipe, SystemAssessDowntabsComponent, SystemAssessFindComponent, SystemAssessActionComponent, SystemAssessAttachmentsComponent, SystemAssessBudgetComponent, SystemAssessBusinessComponent, SystemAssessLessonsComponent, SystemAssessRecomendComponent, SystemAssessSecurityComponent, SystemAssessManagementComponent]
 })
 export class SystemComponentModule {}

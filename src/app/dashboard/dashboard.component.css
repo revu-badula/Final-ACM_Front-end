@@ -84,6 +84,10 @@ h1{
     margin-left: 20px;
 }
 
+a{
+    cursor: pointer;
+}
+
 /*.second-row{
     margin-top: 20px;
 }

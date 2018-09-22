@@ -1,74 +1,73 @@
+<div class="plus">
 
+        <fa class="edit-icon icons" [name]="'edit'" style="float:right" (click)="showPlus()"></fa>
     
-     <div class="form-div">
+    </div>
+    
+    <div class="form-div">
+            <form class="former">
+        
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+        
+                        <label for="inputState">Acronym</label>
+                        <div class="asterisk">*</div>
+                        <input type="text" class="form-control" id="lastName" value="{{ mainData }}" readonly>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="lastName">Last updated by</label>
+        
+                        <input type="text" class="form-control" id="lastName" value="{{ updatedTime }}" readonly>
+                    </div>
+                </div>
+        
+        
+        
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="lastName">Name</label>
+                        <div class="asterisk">*</div>
+                        <input type="text" class="form-control" id="lastName" value="enter here">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="email">Updated at</label>
+                        <input type="email" class="form-control" id="email" value="enter here">
+                    </div>
+                </div>
+            </form>
+        </div>
+ <div class="plus" *ngIf="showPlusButton">
+        <i class="fa fa-plus-square-o" aria-hidden="true" style="float:right;" (click)="goTo()"></i>
+    </div>
+    <div>
         <form class="former">
+  <table class="table table-striped table-hover table-bordere">
+                <thead>
+                    <tr>
     
-            <div class="form-row">
-                <div class="form-group col-md-6">
-    
-                    <label for="inputState">Acronym</label>
-                    <div class="asterisk">*</div>
-                    <input type="text" class="form-control" id="lastName" readonly>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="lastName">Last updated by</label>
-    
-                    <input type="text" class="form-control" id="lastName" readonly>
-                </div>
-            </div>
-    
-    
-    
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="lastName">Name</label>
-                    <div class="asterisk">*</div>
-                    <input type="text" class="form-control" id="lastName" value="enter here">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="email">Updated at</label>
-                    <input type="email" class="form-control" id="email" value="enter here">
-                </div>
-            </div>
+                        <th scope="col">Assessment Name</th>
+                        <th scope="col">Application Acronym</th>
+                   
+                        <th scope="col">Assessment Date</th>
+                         <th scope="col">Next assessment Date</th>
+                         <th scope="col">Status</th>
+                    </tr>
+                </thead>
+ <tbody>
+                    <tr *ngFor="let  assess of assessmentDTOs | paginate: { itemsPerPage: 10, currentPage: p }">
+                         <td>
+                            <a (click)="getAudit(assess.assessmentId)" style="cursor:pointer;color:blue;">{{ assess.auditName}}</a>
+                        </td>
+                        <td>{{ assess.name }}</td>
+                        <td>{{ assess.assessmentDt | filterDate}}</td>
+                        <td>{{assess.nextAssessmentDt | filterDate }}</td>
+                        <td>{{ assess.status }}</td>
+                    </tr>
+                </tbody>
+            </table>
+                
         </form>
     </div>
-
-        <div class="form-div">
-                <div class="head">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active"  routerLinkActive="active" routerLink="/locality/tab/assessment/Tab1/first1" [routerLinkActiveOptions]="{exact: true}">Details</a>
-                        </li>
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/find">Findings</a> -->
-<!--                         </li> -->
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active"  routerLink="/locality/tab/Audit/Tab/recomendation">Recomendations</a> -->
-<!--                         </li> -->
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/management">Management Response</a> -->
-<!--                         </li> -->
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/action">Action Plan</a> -->
-<!--                         </li> -->
-                        
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/brisk">Business Risk</a> -->
-<!--                         </li> -->
-<!--                          <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/srisk">Security Risk</a> -->
-<!--                         </li> -->
-<!--                          <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/budget">Budget</a> -->
-<!--                         </li> -->
-<!--                          <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/attachment">Attachments</a> -->
-<!--                         </li> -->
-<!--                         <li class="nav-item"> -->
-<!--                             <a class="nav-link" routerLinkActive="active" routerLink="/locality/tab/Audit/Tab/lessons">Lessons Learned</a> -->
-<!--                         </li> -->
-                    </ul>
-                </div>
-              <router-outlet></router-outlet>
-            </div>
-           
+    <router-outlet></router-outlet>
+        
+          

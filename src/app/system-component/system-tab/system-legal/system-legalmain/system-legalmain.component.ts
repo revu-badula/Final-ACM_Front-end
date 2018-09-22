@@ -16,10 +16,12 @@ export class SystemLegalmainComponent implements OnInit {
   public updatedTime: any;
   public appMOUs: any;
   public showSigned: boolean = false;
+  public loading: boolean = false;
+  public moudtos: any;
   constructor(private _apiservice: ApiserviceService,
     private http: Http, private modalService: NgbModal, private utilservice: UtilService,
     private router: Router) {
-      UtilService.appMouId = '';
+    localStorage.removeItem('systemMouId');
     this.getAppId();
 
   }
@@ -28,42 +30,46 @@ export class SystemLegalmainComponent implements OnInit {
   }
 
   getAppId() {
-    this._apiservice.viewApplication(UtilService.systemName)
+    this.loading = true;
+    this._apiservice.viewApplication(localStorage.getItem('systemName'))
       .subscribe((data: any) => {
+        this.loading = false;
         this.acronym = data.applicationViewDTO.acronym;
         let d = new Date(data.applicationViewDTO.updatedTime);
         let day = d.getDate();
         let month = d.getMonth() + 1;
         let year = d.getFullYear();
         this.updatedTime = month + "/" + day + "/" + year;
-        this.getAppMOUs(data.applicationViewDTO.applicationId);
-      }, error => console.log(error));
+        this.moudtos = data.applicationViewDTO.moudtos;
+        // this.getAppMOUs(data.applicationViewDTO.applicationId);
+      }, error => {
+        this.loading = false;
+        console.log(error);
+      });
   }
 
 
-  getAppMOUs(id) {
+  // getAppMOUs(id) {
 
-    this._apiservice.getAppMOUs(id)
-      .subscribe((data: any) => {
-        this.appMOUs = data;
+  //   this._apiservice.getAppMOUs(id)
+  //     .subscribe((data: any) => {
+  //       this.appMOUs = data;
 
-      }, error => console.log(error));
-  }
+  //     }, error => console.log(error));
+  // }
 
   editClick() {
     this.showSigned = true;
-    
-    }
 
-    createMOU()
-    {
-      this.router.navigate(['/system/tab/legal/legalform']);
-    }
+  }
 
-    getAppMOU(id)
-    {
-      UtilService.appMouId = id;
-      this.router.navigate(['/system/tab/legal/legalform']);
-    }
+  createMOU() {
+    this.router.navigate(['/system/tab/legal/legalform']);
+  }
+
+  getAppMOU(id) {
+    localStorage.setItem('systemMouId', id);
+    this.router.navigate(['/system/tab/legal/legalform']);
+  }
 
 }

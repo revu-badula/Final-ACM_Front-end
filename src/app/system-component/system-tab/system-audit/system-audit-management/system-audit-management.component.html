@@ -1,9 +1,25 @@
+<div class="my-container">
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+  </div>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Info</h4>
+    </div>
+    <div class="modal-body">
+      <p>{{info}}</p>
+    </div>
+    <div class="modal-footer">
+      <button  type="button" class="btn btn-outline-dark confbtn" (click)="c()">Ok</button>
+    </div>
+    </ng-template>
 <div class="form-div">
-    <form class="former">
+    <form #myForm="ngForm" class="former">
         <div class="panel-heading">
-            <label class="details">RECOMENDATIONS</label>
+            <label class="details">Management Response</label>
             <div class="plus">
-
+                    <span class=" title elipsis pull-right" *ngIf="showEdit">
+                            <a><fa class="edit-icon icons" [name]="'edit'" (click)="valueChanged()"></fa></a>
+                        </span>
                 <span class=" title elipsis pull-right">
                     <a *ngIf="!showForm" (click)="saveManagement()" title="Save Audit" class="ng-hide">
                         <i class="fa fa-floppy-o" aria-hidden="true" style="font-size: 24px;"></i>
@@ -50,7 +66,7 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="lastName">Response date</label>
-                    <my-date-picker name="estDate" [options]="myDatePickerOptions" (dateChanged)="getResDate($event)" [(ngModel)]="resDate"></my-date-picker>
+                    <my-date-picker name="resDate" (dateChanged)="getResDate($event)" [(ngModel)]="resDate"></my-date-picker>
                 </div>
             </div>
             <div class="form-row">

@@ -2,13 +2,14 @@ export class System {
 
  
 
-	updatedTime:any;
-	acronym:string;
-
-	 businessOwner:string;
-	 systemOwner:string;
-	
- applicationId:number;
+  updatedTime: any;
+  acronym: string;
+  name:any;
+  businessOwnerNameDoe: string;
+  systemOwnerNameDoe: string;
+  systemSensitivity: number;
+  applicationId: number;
+  systemSensitivityName: string;
 
  
 

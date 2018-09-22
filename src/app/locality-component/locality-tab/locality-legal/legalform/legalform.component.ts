@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef , TemplateRef} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, TemplateRef } from '@angular/core';
 import { MOUDocDTO, Mou } from '../../../../data_model_legal';
 import { ApiserviceService } from '../../../../apiservice.service';
 import { APP_CONFIG } from '../../../../app.config';
 import { IMyDate, IMyDpOptions } from 'mydatepicker';
-import { NgbModal,NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { UtilService } from '../../../../util.service';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
@@ -18,12 +18,14 @@ declare var swal: any; ''
 })
 export class LegalformComponent implements OnInit {
   @ViewChild('fileInput') inputEl: ElementRef;
- @ViewChild('content') content: TemplateRef<any>;
+  @ViewChild('content') content: TemplateRef<any>;
   public myDatePickerOptions: IMyDpOptions = {
     dateFormat: 'mm/dd/yyyy'
   };
   public appId: any;
   mou: Mou;
+  public files = [] as File[];
+
   mouDocDTO: MOUDocDTO;
   appMOUs: Mou;
   public moureceiptdt: any;
@@ -37,9 +39,9 @@ export class LegalformComponent implements OnInit {
   public showSigned: boolean = false;
   public certify: any;
   public recipt: any;
-  public loading:boolean = false;
-    contentData: string = "";
-    public showForm: boolean = true;
+  public loading: boolean = false;
+  contentData: string = "";
+  public showForm: boolean = true;
   public showLegalBox: boolean = true;
   constructor(private _apiservice: ApiserviceService,
     private http: Http, private modalService: NgbModal, private utilservice: UtilService,
@@ -65,12 +67,11 @@ export class LegalformComponent implements OnInit {
         this.updatedTime = month + "/" + day + "/" + year;
         this.appId = data.applicationViewDTO.applicationId;
         this.mou.applicationID = data.applicationViewDTO.applicationId;
-        if(localStorage.getItem('appMouId') === null)
-        {
+        if (localStorage.getItem('appMouId') === null) {
           this.showLegalBox = false;
           this.showForm = false;
         }
-        else{
+        else {
           this.getAppMOUs(data.applicationViewDTO.applicationId);
         }
 
@@ -79,19 +80,19 @@ export class LegalformComponent implements OnInit {
         console.log(error);
       });
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   saveMOU() {
     let ngbModalOptions: NgbModalOptions = {
@@ -103,12 +104,16 @@ export class LegalformComponent implements OnInit {
     this.mou.applicationID = this.appId;
     if (this.mou.mouId === undefined) {
       //this.locality.createdBy=Cookie.get('userName');
-      formData.append('attachments', inputEl.files.item(0));
+      //formData.append('attachments', inputEl.files.item(0));
+      for (let i = 0; i < this.files.length; i++) {
+        formData.append('attachments', this.files[i]);
+
+      }
       formData.append('mou', JSON.stringify(this.mou));
       let url_update = APP_CONFIG.saveMOU;
       this.loading = true;
       this.http.post(url_update, formData).subscribe((data: any) => {
-this.contentData = "legal has been created.";
+        this.contentData = "legal has been created.";
 
         this.modalService.open(this.content, ngbModalOptions);
         this.loading = false;
@@ -121,7 +126,11 @@ this.contentData = "legal has been created.";
     }
     else {
       //this.locality.updatedBy=Cookie.get('userName');
-      formData.append('attachments', inputEl.files.item(0));
+      //formData.append('attachments', inputEl.files.item(0));
+      for (let i = 0; i < this.files.length; i++) {
+        formData.append('attachments', this.files[i]);
+
+      }
       formData.append('mou', JSON.stringify(this.mou));
       let url_update = APP_CONFIG.updateMOU;
       this.loading = true;
@@ -132,7 +141,8 @@ this.contentData = "legal has been created.";
         this.modalService.open(this.content, ngbModalOptions);
       }, error => {
         this.loading = false;
-        console.log(error);});
+        console.log(error);
+      });
     }
   }
 
@@ -143,11 +153,10 @@ this.contentData = "legal has been created.";
         this.loading = false;
         let id = localStorage.getItem('appMouId');
         let appMouid = +id;
-       let moudata =data.filter(item => item.mouId === appMouid);
-       for(let i =0;i<moudata.length;i++)
-       {
-         this.getAppMOU(moudata[i]);
-       }
+        let moudata = data.filter(item => item.mouId === appMouid);
+        for (let i = 0; i < moudata.length; i++) {
+          this.getAppMOU(moudata[i]);
+        }
       }, error => {
         this.loading = false;
         console.log(error);
@@ -165,6 +174,7 @@ this.contentData = "legal has been created.";
         this.mouDocDTO = new MOUDocDTO();
         this.mouDocDTO.fileName = fileInput.target.files[0].name;
         this.mouDocDTO.status = true;
+        this.files.push(fileInput.target.files[0]);
         this.mouDocDTO.newFile = true;
         this.mou.mouDocDTOs.push(this.mouDocDTO);
       }
@@ -173,6 +183,7 @@ this.contentData = "legal has been created.";
         this.mouDocDTO.fileName = fileInput.target.files[0].name;
         this.mouDocDTO.status = true;
         this.mouDocDTO.newFile = true;
+        this.files.push(fileInput.target.files[0]);
         this.mou.mouDocDTOs.push(this.mouDocDTO);
 
 
@@ -215,8 +226,8 @@ this.contentData = "legal has been created.";
 
 
   }
-  f(){
-  this.router.navigate(['/locality/tab/legal']);
+  f() {
+    this.router.navigate(['/locality/tab/legal']);
   }
 
   getNextDate(value) {
@@ -225,45 +236,45 @@ this.contentData = "legal has been created.";
   getFile(id) {
     window.open(APP_CONFIG.getMOUFile + '?' + 'mouDocId' + '=' + id)
   }
-  
-  
-  
-  
-  
+
+
+
+
+
   deleteFile(id, index) {
-  this.confirm('Are You Sure?', 'delete the file', 'YES', 'NO')
+    this.confirm('Are You Sure?', 'delete the file', 'YES', 'NO')
       .then((result: any) => {
         if (result.value !== undefined && result.value) {
-    if (id === undefined) {
-      let length = this.mou.mouDocDTOs.length;
-      if (length === 1) {
-        this.mou.mouDocDTOs = []; //a,b,c,d,f = [2] =[3]
-      }
-      else {
-        for (let i = index; i < length; i++) {
-          this.mou.mouDocDTOs[i]= this.mou.mouDocDTOs[i + 1];
-        }
-        this.mou.mouDocDTOs.splice(length - 1, 1);
-      }
+          if (id === undefined) {
+            let length = this.mou.mouDocDTOs.length;
+            if (length === 1) {
+              this.mou.mouDocDTOs = []; //a,b,c,d,f = [2] =[3]
+            }
+            else {
+              for (let i = index; i < length; i++) {
+                this.mou.mouDocDTOs[i] = this.mou.mouDocDTOs[i + 1];
+              }
+              this.mou.mouDocDTOs.splice(length - 1, 1);
+            }
 
-    }
-    else {
-      for (let i = 0; i < this.mou.mouDocDTOs.length; i++) {
-        if (this.mou.mouDocDTOs[i].mouDocId === id) {
-          this.mou.mouDocDTOs[i].status = false;
-        }
-      }
-    }
+          }
+          else {
+            for (let i = 0; i < this.mou.mouDocDTOs.length; i++) {
+              if (this.mou.mouDocDTOs[i].mouDocId === id) {
+                this.mou.mouDocDTOs[i].status = false;
+              }
+            }
+          }
 
-  }
-    }, error => {
+        }
+      }, error => {
         console.log(error);
       });
-      }
-      
-      
-      
-       confirm(title = 'Are you sure?', text, confirmButtonText, cancelButtonText, showCancelButton = true) {
+  }
+
+
+
+  confirm(title = 'Are you sure?', text, confirmButtonText, cancelButtonText, showCancelButton = true) {
     return new Promise((resolve, reject) => {
       swal({
         title: title,
@@ -278,20 +289,18 @@ this.contentData = "legal has been created.";
         resolve(result);
       }, error => reject(error));
     });
-      
+
 
 
 
   }
 
-  editClick()
-  {
-  this.showForm = false;
+  editClick() {
+    this.showForm = false;
     this.showLegalBox = false;
   }
 
-  goBack()
-  {
+  goBack() {
     this.router.navigate(['/locality/tab/legal']);
   }
 

@@ -1,5 +1,5 @@
-import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit,  ViewChild, ElementRef, TemplateRef } from '@angular/core';
+import { NgbModal,NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ApiserviceService } from '../../../../apiservice.service';
 import { IMyDate, IMyDpOptions } from 'mydatepicker';
 import { AppAudit, Policy } from '../../../../data.model.auditDTO';
@@ -8,9 +8,13 @@ import {Http, HttpModule, Headers, RequestOptions} from '@angular/http';
 import { APP_CONFIG } from '../../../../app.config';
 import { HttpClient } from "@angular/common/http";
 import { SystemFilterPipeDate } from '../../../system-date-filter';
-import { SystemFilterAuditName } from '../../../system-auditname-filter';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import * as moment from 'moment';
+import { DatePipe } from '@angular/common';
+import { Observable, Subject } from 'rxjs';
+import { Cookie } from 'ng2-cookies';
+
+declare var swal: any; ''
 
 
 @Component({
@@ -20,9 +24,11 @@ import * as moment from 'moment';
  
 })
 export class SystemAuditFirstComponent implements OnInit {
-    @ViewChild('fileInput') inputEl: ElementRef;
+  @ViewChild('fileInput') inputEl: ElementRef;
+    @ViewChild('content1') content:TemplateRef<any>;
  public showSection: boolean = false;
  policies: Policy[];
+  public p: number = 1;
  public showTable: boolean = false;
  public definitive: boolean;
  public policy: boolean;
@@ -32,13 +38,15 @@ export class SystemAuditFirstComponent implements OnInit {
  public policyTypes: any;
  public yesfile:boolean = false;
  showInitial: boolean = false;
- showForm:boolean = true;
+ public info:any
  public showEditMode:boolean = false;
  public appAuditId:any;
  public myDatePickerOptions: IMyDpOptions = {
- dateFormat: 'yyyy-mm-dd'
+ dateFormat: 'mm/dd/yyyy'
  };
  appAudit: AppAudit;
+ public changeOverallStatus: boolean = false;
+
  appId: any;
  auditDate: any;
  nextDate: any;
@@ -53,26 +61,33 @@ export class SystemAuditFirstComponent implements OnInit {
  public show3:boolean;
  public show4:boolean;
  public show5:boolean;
+ public showStatus:boolean=false;
+ public showStatus1:boolean=true;
  public polName:any;
  public hideTable:boolean = true;
  public showLegalBox:boolean = false;
  public showHistory:boolean = false;
  public mainData:any;
+ public showButton:boolean = false;
  public updatedTime:any;
+ public desc:boolean=false;
  public appAuditDTOs:any;
  public editData:any;
  public showOriginal:boolean =true;
  public showEdit:boolean = false;
  public policyNameArray:any;
  public attachment:any;
+ public vauditDate:any;
  public comparePolicyDTO:any;
+ public loading:boolean = false;
  constructor(private modalService: NgbModal, private http: Http, 
  private _apiservice: ApiserviceService, private utilService: UtilService,
- private router: Router, private route: ActivatedRoute) {
+ private router: Router, private route: ActivatedRoute,public datepipe: DatePipe) {
  this.appAudit = new AppAudit();
  this.policyDisplay = new Policy();
  this.policies = [];
  this.getAppId();
+
  
  
   }
@@ -83,9 +98,10 @@ export class SystemAuditFirstComponent implements OnInit {
  }
  
  getAppId() {
- 
- this._apiservice.viewApplication(UtilService.systemName)
+ this.loading = true;
+ this._apiservice.viewApplication(localStorage.getItem('systemName'))
  .subscribe((data: any) => {
+   this.loading = false;
  this.appAudit.applicationID = data.applicationViewDTO.applicationId;
  this.mainData = data.applicationViewDTO.acronym;
  let d = new Date(data.applicationViewDTO.updatedTime);
@@ -95,22 +111,31 @@ export class SystemAuditFirstComponent implements OnInit {
  let month = d.getMonth()+1;
  let year = d.getFullYear();
  this.updatedTime = month+"/"+day+"/"+year;
- }, error => console.log(error));
+ }, error => {
+   this.loading = false;
+ console.log(error);});
  
  }
 
  showOnPageLoad()
  {
- if(UtilService.appAuditId === '')
+ if(localStorage.getItem('systemAppAuditId') === null)
  {
  
  }
  else{
  UtilService.auditActive = true;
+ localStorage.setItem('systemAuditActive','true');
  this.showOriginal =false;
+ this.showButton=true;
  this.showInitial = true;
+ this.show1=true;
+ this.show2=true;
+ this.show3=true;
  this.showEdit = true;
- this.editData = this.appAuditDTOs.filter(item => item.appAuditId === UtilService.appAuditId);
+ let id = localStorage.getItem('systemAppAuditId');
+ let appauid:number = +id;
+ this.editData = this.appAuditDTOs.filter(item => item.appAuditId === appauid);
  
  for(let i=0;i<this.editData.length;i++)
  {
@@ -125,6 +150,7 @@ export class SystemAuditFirstComponent implements OnInit {
  let day = d.getDate();
  let month = d.getMonth()+1;
  let year = d.getFullYear();
+ this.vauditDate = month+"/"+day+"/"+year;
  this.auditDate = {date:{year: year, month: month, day: day}};
 
  let d1 = new Date(this.appAudit.nextAuditDate);
@@ -134,7 +160,7 @@ export class SystemAuditFirstComponent implements OnInit {
  let month1 = d1.getMonth()+1;
  let year1 = d1.getFullYear();
  this.nextDate = {date:{year: year1, month: month1, day: day1}};
- this.show3 = true;
+ //this.show3 = true;
  this.show4 = true;
  //let ad = year + "-" + month + "-" +day;
  //let nad = year1 + "-" + month1 + "-" +day1;
@@ -147,15 +173,19 @@ export class SystemAuditFirstComponent implements OnInit {
 
  getPolicyName(auditId)
  {
+   this.loading = true;
  this._apiservice.getPolicyGroup(auditId)
  .subscribe((data: any) => {
+   this.loading = false;
  this.policyNameArray = data.filter(item => item.policyGrpId === this.appAudit.policyGrpId);
  for(let i =0;i<this.policyNameArray.length;i++)
  {
      this.comparePolicyDTO = this.policyNameArray[i];
  this.polName = this.policyNameArray[i].policyGrpName;
  }
- }, error => { console.log(error) });
+ }, error => { 
+  this.loading = false; 
+  console.log(error); });
  
  }
 
@@ -166,7 +196,7 @@ export class SystemAuditFirstComponent implements OnInit {
 
 
  showAudit(){
- this.router.navigate(['/locality/tab/Audit/']);
+ this.router.navigate(['/system/tab/Audit/']);
  }
 
  showHist(){
@@ -215,7 +245,7 @@ export class SystemAuditFirstComponent implements OnInit {
  this.show2=true;
  //this.appAudit.policyDTOs.policyGrpId = policy;
  this.appAudit.policyGrpId = policy;
- this._apiservice.fetchPolicies(1)
+ this._apiservice.fetchPolicies(policy)
  .subscribe((data: any) => {
  this.showTable = true;
  this.policies = data.policyDTOs;
@@ -227,7 +257,6 @@ export class SystemAuditFirstComponent implements OnInit {
  }
  
  getAuditDate(value) {
- console.log(value);
  if (value.formatted === "") {
  this.err1 = "Enter the AuditDate";
  this.show3 = false;
@@ -237,13 +266,13 @@ export class SystemAuditFirstComponent implements OnInit {
  this.err1 = "";
  let d = value.formatted;
  this.audate = Date.parse(d);
-
- this.appAudit.auditDate = moment(d).format();
+ let latest_date =this.datepipe.transform(d, 'yyyy-MM-dd');
+ this.appAudit.auditDate = moment(latest_date).format();
  if (this.naudt != undefined) {
  if(this.compareDate(this.audate, this.naudt))
  {
  //this.err ="";
- this.appAudit.auditDate = moment(d).format();
+ this.appAudit.auditDate = moment(latest_date).format();
  this.show4=true;
  }
  else {
@@ -265,9 +294,10 @@ export class SystemAuditFirstComponent implements OnInit {
  this.show4=true;
  this.err = "";
  let ddt = value.formatted;
+ let latest_date =this.datepipe.transform(ddt, 'yyyy-MM-dd');
  this.naudt = Date.parse(ddt);
  if (this.compareDate(this.audate, this.naudt)) {
- this.appAudit.nextAuditDate = moment(ddt).format();
+ this.appAudit.nextAuditDate = moment(latest_date).format();
  }
  else {
  this.err = "nextDueDate should be after the auditDate";
@@ -285,6 +315,7 @@ export class SystemAuditFirstComponent implements OnInit {
  }
  else {
  this.appAudit.status = value;
+ this.changeOverallStatus = true;
  this.showLegalBox=true;
  
  
@@ -313,6 +344,11 @@ export class SystemAuditFirstComponent implements OnInit {
  
  saveAudit()
  {
+  let ngbModalOptions: NgbModalOptions = {
+    backdrop : 'static',
+    keyboard : false
+    };
+   this.loading = true;
  const headers = new Headers();
  headers.append('Content-Type', 'application/json');
  let options = new RequestOptions({ headers: headers });
@@ -324,15 +360,18 @@ export class SystemAuditFirstComponent implements OnInit {
  this.appAudit.auditPolicyDTOs.push(this.policies[i]);
  }
 
-
+this.appAudit.createdBy=Cookie.get('userName');
  let data = JSON.stringify(this.appAudit);
  this.http.post(url_update,data,options)
  .subscribe((data: any) => {
  //console.log(data);
  //UtilService.auditActive = true;
- this.router.navigate(['/system/tab/Audit']);
+ this.loading = false;
+ this.info="Audit has been created.";
+ this.modalService.open(this.content,ngbModalOptions);
 
  }, error => {
+   this.loading = false;
  console.log(error);
  });
  }
@@ -343,31 +382,42 @@ export class SystemAuditFirstComponent implements OnInit {
  // {
  // this.appAudit.auditPolicyDTOs.push(this.policies[i]);
  // }
+ this.appAudit.updatedBy=Cookie.get('userName');
  let data = JSON.stringify(this.appAudit);
  this.http.post(url_update,data,options)
  .subscribe((data: any) => {
- console.log(data);
- UtilService.auditActive = true;
+ this.loading = false;
+ this.showButton = true;
+ this.changeOverallStatus = false;
+ this.info="Audit has been updated.";
+ this.modalService.open(this.content,ngbModalOptions);
  }, error => {
+   this.loading = false;
  console.log(error);
  });
 
  }
  }
+
+ redirect()
+ {
+  this.router.navigate(['/system/tab2/Audit']);
+ }
  
  goTo()
  {
- this.router.navigate(['/system/tab/Audit/Tab/find']);
+ this.router.navigate(['/system/tab2/Audit/Tab/find']);
  
  }
 
 
  valueChanged()
  {
- this.utilService.setEditTrue(true);
  this.showInitial = false;
  this.showEdit = false;
- this.showOriginal = true;
+ this.showOriginal = false;
+ this.showStatus=true;
+ this.showStatus1=false;
  
  }
 
@@ -437,5 +487,91 @@ export class SystemAuditFirstComponent implements OnInit {
 
           }
       }
+
+
+      downloadFile()
+      {
+        window.open(APP_CONFIG.generatePolicyFile + '?' + 'policyGrpId' + '=' + this.appAudit.policyGrpId);
+        
+      }
+
+
+      handleSort(){
+        if(!this.desc) {
+          this.policies.sort(this.doAsc);
+          this.desc = true;
+        }
+        else {
+           this.policies.sort(this.doDsc);
+           this.desc = false;
+        }
+    
+      }
+      doAsc(a, b) {
+        if (a.controlNumber > b.controlNumber) {
+          return -1;
+        } else if (a.controlNumber < b.controlNumber) {
+          return 1;
+        }
+        return 0;
+      }
+    
+      doDsc(a, b) {
+        if (a.controlNumber < b.controlNumber) {
+          return -1;
+        } else if (a.controlNumber > b.controlNumber) {
+          return 1;
+        }
+        return 0;
+      }
+
+
+      canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+        // console.log(this.myForm);
+        // console.log(this.myForm.dirty);
+        //if (this.myForm.classList[3] === 'ng-touched' || this.myForm.nativeElement.classList[3] === 'ng-dirty') {
+        if (this.changeOverallStatus && this.showButton) {
+          //return this.dialogService.confirm('Discard changes for Budget?');
+          //const modal=this.modalService.open(this.content1, ngbModalOptions);
+    
+          return this.confirm1('Do you want to save changes?', 'for details', 'YES', 'NO');
+    
+    
+        }
+    
+        return true;
+    
+      }
+    
+    
+    
+    
+      confirm1(title = 'Are you sure?', text, confirmButtonText, cancelButtonText, showCancelButton = true) {
+        return new Promise<boolean>((resolve, reject) => {
+          swal({
+            title: title,
+            text: text,
+            type: 'warning',
+            showCancelButton: showCancelButton,
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText,
+            allowOutsideClick: false
+          }).then((result) => {
+            if (result.value !== undefined && result.value) {
+              this.saveAudit();
+              resolve(false);
+            }
+            else {
+              resolve(true);
+            }
+          }, error => reject(error));
+        });
+    
+    
+    
+    
+      }
+    
+    
 
   }
