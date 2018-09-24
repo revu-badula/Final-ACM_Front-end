@@ -223,7 +223,7 @@ export class SystemLegalformComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/system/tab/legal']);
+    this.router.navigate(['/system/tab2/legal']);
   }
 
 

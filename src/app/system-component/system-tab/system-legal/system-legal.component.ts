@@ -147,7 +147,7 @@ export class SystemLegalComponent implements OnInit {
   //    this.moureceiptdt = {date: null};
   // this.showLegal = true;
 
-  this.router.navigate(['/system/tab/legal/legalform']);
+  this.router.navigate(['/system/tab2/legal/legalform']);
   
 }
   
